@@ -8,6 +8,7 @@ import {
 } from "./constants";
 import { updateOpponentPaddle } from "./ai";
 import { createServeVelocity, updateBallPhysics } from "./physics";
+import { DEFAULT_SKIN_ID } from "./skins";
 import type {
   FrameStep,
   GameState,
@@ -32,6 +33,7 @@ export function createInitialGameState(field: Size): GameState {
       opponent: 0,
     },
     winner: null,
+    selectedSkinId: DEFAULT_SKIN_ID,
     player: {
       position: {
         x: PADDLE_EDGE_OFFSET,
