@@ -4,7 +4,13 @@ import { createKeyboardInput } from "./game/input";
 import { createGameLoop } from "./game/loop";
 import { createCanvasRenderer } from "./game/render";
 import { loadSelectedSkinId, saveSelectedSkinId } from "./game/skinStorage";
-import { createInitialGameState, updateGameState } from "./game/state";
+import {
+  createInitialGameState,
+  resetMatchState,
+  updateGameState,
+} from "./game/state";
+import type { GamePhase } from "./game/types";
+import { createMatchEndScreen } from "./ui/matchEnd";
 import { createScreenNavigation } from "./ui/navigation";
 import { createScoreHud } from "./ui/score";
 import { createSkinSelectionScreen } from "./ui/skinSelection";
@@ -12,6 +18,9 @@ import { createSkinSelectionScreen } from "./ui/skinSelection";
 const canvas = document.querySelector<HTMLCanvasElement>("#game-canvas");
 const startScreen = document.querySelector<HTMLElement>("#start-screen");
 const skinScreen = document.querySelector<HTMLElement>("#skin-selection-screen");
+const matchEndScreenElement = document.querySelector<HTMLElement>(
+  "#match-end-screen",
+);
 const scoreHudElement = document.querySelector<HTMLElement>(".score-hud");
 const startMatchButton = document.querySelector<HTMLButtonElement>("#start-match-button");
 const openSkinsButton = document.querySelector<HTMLButtonElement>("#open-skins-button");
@@ -19,6 +28,14 @@ const skinBackButton = document.querySelector<HTMLButtonElement>("#skin-back-but
 const skinStartMatchButton = document.querySelector<HTMLButtonElement>(
   "#skin-start-match-button",
 );
+const replayMatchButton = document.querySelector<HTMLButtonElement>(
+  "#replay-match-button",
+);
+const endChangeSkinButton = document.querySelector<HTMLButtonElement>(
+  "#end-change-skin-button",
+);
+const matchResultTitle = document.querySelector<HTMLElement>("#match-result-title");
+const matchFinalScore = document.querySelector<HTMLElement>("#match-final-score");
 const playerScore = document.querySelector<HTMLElement>("#player-score");
 const opponentScore = document.querySelector<HTMLElement>("#opponent-score");
 const skinPickerList = document.querySelector<HTMLElement>("#skin-picker-list");
@@ -30,11 +47,16 @@ if (!canvas) {
 if (
   !startScreen ||
   !skinScreen ||
+  !matchEndScreenElement ||
   !scoreHudElement ||
   !startMatchButton ||
   !openSkinsButton ||
   !skinBackButton ||
-  !skinStartMatchButton
+  !skinStartMatchButton ||
+  !replayMatchButton ||
+  !endChangeSkinButton ||
+  !matchResultTitle ||
+  !matchFinalScore
 ) {
   throw new Error("Screen navigation elements were not found.");
 }
@@ -51,9 +73,14 @@ const renderer = createCanvasRenderer(canvas);
 const gameState = createInitialGameState(FIELD_SIZE, loadSelectedSkinId());
 const keyboard = createKeyboardInput(window);
 const scoreHud = createScoreHud({ playerScore, opponentScore });
+const matchEndScreen = createMatchEndScreen({
+  resultTitle: matchResultTitle,
+  finalScore: matchFinalScore,
+});
 const navigation = createScreenNavigation({
   startScreen,
   skinScreen,
+  matchEndScreen: matchEndScreenElement,
   scoreHud: scoreHudElement,
 });
 
@@ -67,13 +94,18 @@ createSkinSelectionScreen({
 });
 
 function startMatch(): void {
-  gameState.phase = "running";
+  resetMatchState(gameState);
+  scoreHud.update(gameState);
   navigation.showMatch();
 }
 
 startMatchButton.addEventListener("click", startMatch);
 skinStartMatchButton.addEventListener("click", startMatch);
+replayMatchButton.addEventListener("click", startMatch);
 openSkinsButton.addEventListener("click", () => {
+  navigation.showSkins();
+});
+endChangeSkinButton.addEventListener("click", () => {
   navigation.showSkins();
 });
 skinBackButton.addEventListener("click", () => {
@@ -82,7 +114,18 @@ skinBackButton.addEventListener("click", () => {
 
 const gameLoop = createGameLoop({
   update: (step) => {
+    const previousPhase: GamePhase = gameState.phase;
+
     updateGameState(gameState, step, keyboard.state);
+
+    if (
+      previousPhase !== "match-over" &&
+      gameState.phase === "match-over" &&
+      gameState.winner
+    ) {
+      matchEndScreen.update(gameState);
+      navigation.showMatchEnd();
+    }
   },
   draw: () => {
     renderer.resize();
