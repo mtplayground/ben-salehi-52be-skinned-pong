@@ -51,6 +51,10 @@ export type SkinId = (typeof SKINS)[number]["id"];
 
 export const DEFAULT_SKIN_ID: SkinId = SKINS[0].id;
 
+export function isSkinId(value: string): value is SkinId {
+  return SKINS.some((skin) => skin.id === value);
+}
+
 export function getSkinById(skinId: string): Skin {
   return SKINS.find((skin) => skin.id === skinId) ?? SKINS[0];
 }
