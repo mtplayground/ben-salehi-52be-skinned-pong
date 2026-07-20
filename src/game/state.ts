@@ -26,7 +26,7 @@ export function createInitialGameState(
 
   return {
     field: { ...field },
-    phase: "running",
+    phase: "title",
     timing: {
       frame: 0,
       elapsedSeconds: 0,
@@ -73,7 +73,7 @@ export function updateGameState(
   state.timing.deltaSeconds = step.deltaSeconds;
   state.timing.elapsedSeconds += step.deltaSeconds;
 
-  if (state.phase === "match-over") {
+  if (state.phase !== "running") {
     return;
   }
 

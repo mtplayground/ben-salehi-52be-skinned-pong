@@ -28,6 +28,10 @@ body {
   overflow: hidden;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 .app-shell {
   position: relative;
   display: grid;
@@ -124,6 +128,95 @@ body {
   transform: translateX(-50%);
 }
 
+.start-screen {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  padding: clamp(18px, 5vw, 56px);
+  background:
+    radial-gradient(circle at 50% 36%, rgba(39, 245, 255, 0.18), transparent 26rem),
+    radial-gradient(circle at 52% 64%, rgba(255, 61, 242, 0.12), transparent 24rem),
+    rgba(3, 4, 10, 0.76);
+}
+
+.start-screen__panel {
+  display: grid;
+  gap: clamp(24px, 5vh, 42px);
+  justify-items: center;
+  width: min(680px, 100%);
+  text-align: center;
+}
+
+.start-screen h1 {
+  margin: 0;
+  font-size: clamp(3rem, 11vw, 7.5rem);
+  font-weight: 950;
+  line-height: 0.9;
+  color: #f7fff6;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 16px rgba(39, 245, 255, 0.55),
+    0 0 36px rgba(255, 61, 242, 0.38),
+    0 0 72px rgba(57, 255, 20, 0.22);
+}
+
+.start-screen__actions,
+.skin-screen__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+.arcade-button {
+  min-width: 148px;
+  min-height: 48px;
+  padding: 0 20px;
+  color: #021014;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 950;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  background: #39ff14;
+  border: 1px solid rgba(247, 255, 246, 0.82);
+  border-radius: 8px;
+  box-shadow:
+    0 0 18px rgba(57, 255, 20, 0.42),
+    inset 0 0 16px rgba(247, 255, 246, 0.28);
+  cursor: pointer;
+}
+
+.arcade-button:hover,
+.arcade-button:focus-visible {
+  background: #27f5ff;
+  box-shadow:
+    0 0 22px rgba(39, 245, 255, 0.48),
+    inset 0 0 16px rgba(247, 255, 246, 0.3);
+}
+
+.arcade-button:focus-visible {
+  outline: 2px solid #f7fff6;
+  outline-offset: 3px;
+}
+
+.arcade-button--secondary {
+  color: #f7fff6;
+  background: rgba(3, 4, 10, 0.82);
+  border-color: rgba(39, 245, 255, 0.68);
+  box-shadow:
+    0 0 18px rgba(39, 245, 255, 0.2),
+    inset 0 0 16px rgba(255, 61, 242, 0.1);
+}
+
+.arcade-button--secondary:hover,
+.arcade-button--secondary:focus-visible {
+  color: #021014;
+}
+
 .score-side {
   display: flex;
   align-items: baseline;
@@ -187,6 +280,10 @@ body {
 }
 
 .skin-screen__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
   margin-bottom: 18px;
 }
 
@@ -199,6 +296,17 @@ body {
   text-shadow:
     0 0 18px rgba(39, 245, 255, 0.45),
     0 0 30px rgba(255, 61, 242, 0.22);
+}
+
+@media (max-width: 720px) {
+  .skin-screen__header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .skin-screen__actions {
+    justify-content: flex-start;
+  }
 }
 
 @media (max-width: 560px) {

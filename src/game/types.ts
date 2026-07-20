@@ -43,7 +43,7 @@ export interface Skin {
 }
 
 export type PlayerSide = "player" | "opponent";
-export type GamePhase = "running" | "match-over";
+export type GamePhase = "title" | "running" | "match-over";
 
 export interface Score {
   player: number;

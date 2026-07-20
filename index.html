@@ -24,13 +24,39 @@
         </span>
       </aside>
       <section
+        id="start-screen"
+        class="start-screen"
+        aria-label="Start screen"
+      >
+        <div class="start-screen__panel">
+          <h1>Skinned Pong</h1>
+          <div class="start-screen__actions">
+            <button id="start-match-button" class="arcade-button" type="button">
+              Start Match
+            </button>
+            <button id="open-skins-button" class="arcade-button arcade-button--secondary" type="button">
+              Skins
+            </button>
+          </div>
+        </div>
+      </section>
+      <section
         id="skin-selection-screen"
         class="skin-screen"
         aria-label="Skin selection"
+        hidden
       >
         <div class="skin-screen__panel">
           <div class="skin-screen__header">
             <h1>Skins</h1>
+            <div class="skin-screen__actions">
+              <button id="skin-back-button" class="arcade-button arcade-button--secondary" type="button">
+                Back
+              </button>
+              <button id="skin-start-match-button" class="arcade-button" type="button">
+                Start Match
+              </button>
+            </div>
           </div>
           <div id="skin-picker-list" class="skin-grid"></div>
         </div>
