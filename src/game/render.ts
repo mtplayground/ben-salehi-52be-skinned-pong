@@ -1,4 +1,4 @@
-import type { Size } from "./types";
+import type { GameState, Size } from "./types";
 
 const BACKGROUND_COLOR = "#05050b";
 const FIELD_LINE_COLOR = "rgba(85, 240, 255, 0.42)";
@@ -6,13 +6,10 @@ const CENTER_LINE_COLOR = "rgba(245, 247, 255, 0.2)";
 
 export interface CanvasRenderer {
   resize(): void;
-  drawBaseScene(): void;
+  draw(state: GameState): void;
 }
 
-export function createCanvasRenderer(
-  canvas: HTMLCanvasElement,
-  fieldSize: Size,
-): CanvasRenderer {
+export function createCanvasRenderer(canvas: HTMLCanvasElement): CanvasRenderer {
   const context = canvas.getContext("2d");
 
   if (!context) {
@@ -32,13 +29,13 @@ export function createCanvasRenderer(
     }
   }
 
-  function drawBaseScene(): void {
+  function draw(state: GameState): void {
     const scale = Math.min(
-      canvas.width / fieldSize.width,
-      canvas.height / fieldSize.height,
+      canvas.width / state.field.width,
+      canvas.height / state.field.height,
     );
-    const drawWidth = fieldSize.width * scale;
-    const drawHeight = fieldSize.height * scale;
+    const drawWidth = state.field.width * scale;
+    const drawHeight = state.field.height * scale;
     const offsetX = (canvas.width - drawWidth) / 2;
     const offsetY = (canvas.height - drawHeight) / 2;
 
@@ -50,14 +47,14 @@ export function createCanvasRenderer(
     context2d.translate(offsetX, offsetY);
     context2d.scale(scale, scale);
 
-    drawPlayField(context2d, fieldSize);
+    drawPlayField(context2d, state.field);
 
     context2d.restore();
   }
 
   return {
     resize,
-    drawBaseScene,
+    draw,
   };
 }
 
