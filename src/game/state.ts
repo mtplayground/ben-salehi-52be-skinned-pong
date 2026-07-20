@@ -1,5 +1,11 @@
-import { BALL_RADIUS, PADDLE_EDGE_OFFSET, PADDLE_SIZE } from "./constants";
-import type { FrameStep, GameState, Size } from "./types";
+import {
+  BALL_RADIUS,
+  FIELD_BORDER_INSET,
+  PADDLE_EDGE_OFFSET,
+  PADDLE_SIZE,
+  PLAYER_PADDLE_SPEED,
+} from "./constants";
+import type { FrameStep, GameState, InputState, Size } from "./types";
 
 export function createInitialGameState(field: Size): GameState {
   const paddleY = (field.height - PADDLE_SIZE.height) / 2;
@@ -36,8 +42,37 @@ export function createInitialGameState(field: Size): GameState {
   };
 }
 
-export function updateGameState(state: GameState, step: FrameStep): void {
+export function updateGameState(
+  state: GameState,
+  step: FrameStep,
+  input: InputState,
+): void {
   state.timing.frame += 1;
   state.timing.deltaSeconds = step.deltaSeconds;
   state.timing.elapsedSeconds += step.deltaSeconds;
+
+  updatePlayerPaddle(state, step.deltaSeconds, input);
+}
+
+function updatePlayerPaddle(
+  state: GameState,
+  deltaSeconds: number,
+  input: InputState,
+): void {
+  const direction = Number(input.down) - Number(input.up);
+
+  if (direction === 0) {
+    return;
+  }
+
+  const minY = FIELD_BORDER_INSET;
+  const maxY = state.field.height - FIELD_BORDER_INSET - state.player.size.height;
+  const nextY =
+    state.player.position.y + direction * PLAYER_PADDLE_SPEED * deltaSeconds;
+
+  state.player.position.y = clamp(nextY, minY, maxY);
+}
+
+function clamp(value: number, min: number, max: number): number {
+  return Math.min(Math.max(value, min), max);
 }
