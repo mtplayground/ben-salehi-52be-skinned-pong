@@ -1,12 +1,14 @@
 import type { Ball, GameState, Paddle, Size } from "./types";
 import { FIELD_BORDER_INSET } from "./constants";
 
-const BACKGROUND_COLOR = "#05050b";
-const FIELD_LINE_COLOR = "rgba(85, 240, 255, 0.42)";
-const CENTER_LINE_COLOR = "rgba(245, 247, 255, 0.2)";
-const PLAYER_PADDLE_COLOR = "#55f0ff";
-const OPPONENT_PADDLE_COLOR = "#ff4fd8";
-const BALL_COLOR = "#f5f7ff";
+const BACKGROUND_COLOR = "#03040a";
+const FIELD_LINE_COLOR = "#27f5ff";
+const FIELD_ACCENT_COLOR = "#ff3df2";
+const CENTER_LINE_COLOR = "rgba(57, 255, 20, 0.5)";
+const PLAYER_PADDLE_COLOR = "#27f5ff";
+const OPPONENT_PADDLE_COLOR = "#ff3df2";
+const BALL_COLOR = "#39ff14";
+const BALL_CORE_COLOR = "#f7fff6";
 
 export interface CanvasRenderer {
   resize(): void;
@@ -70,8 +72,8 @@ function drawPlayField(context: CanvasRenderingContext2D, fieldSize: Size): void
 
   context.strokeStyle = FIELD_LINE_COLOR;
   context.lineWidth = 4;
-  context.shadowColor = "rgba(0, 240, 255, 0.52)";
-  context.shadowBlur = 18;
+  context.shadowColor = FIELD_LINE_COLOR;
+  context.shadowBlur = 20;
   context.strokeRect(
     FIELD_BORDER_INSET,
     FIELD_BORDER_INSET,
@@ -79,10 +81,22 @@ function drawPlayField(context: CanvasRenderingContext2D, fieldSize: Size): void
     fieldSize.height - FIELD_BORDER_INSET * 2,
   );
 
+  context.strokeStyle = FIELD_ACCENT_COLOR;
+  context.lineWidth = 2;
+  context.shadowColor = FIELD_ACCENT_COLOR;
+  context.shadowBlur = 12;
+  context.strokeRect(
+    FIELD_BORDER_INSET + 10,
+    FIELD_BORDER_INSET + 10,
+    fieldSize.width - (FIELD_BORDER_INSET + 10) * 2,
+    fieldSize.height - (FIELD_BORDER_INSET + 10) * 2,
+  );
+
   context.setLineDash([16, 18]);
   context.strokeStyle = CENTER_LINE_COLOR;
   context.lineWidth = 3;
-  context.shadowBlur = 0;
+  context.shadowColor = "#39ff14";
+  context.shadowBlur = 12;
   context.beginPath();
   context.moveTo(fieldSize.width / 2, 48);
   context.lineTo(fieldSize.width / 2, fieldSize.height - 48);
@@ -98,6 +112,18 @@ function drawPaddle(
 ): void {
   context.save();
 
+  context.shadowColor = color;
+  context.shadowBlur = 28;
+  context.strokeStyle = color;
+  context.lineWidth = 6;
+  context.strokeRect(
+    paddle.position.x,
+    paddle.position.y,
+    paddle.size.width,
+    paddle.size.height,
+  );
+
+  context.shadowBlur = 14;
   context.fillStyle = color;
   context.fillRect(
     paddle.position.x,
@@ -106,15 +132,38 @@ function drawPaddle(
     paddle.size.height,
   );
 
+  context.shadowBlur = 0;
+  context.fillStyle = "rgba(247, 255, 246, 0.72)";
+  context.fillRect(
+    paddle.position.x + paddle.size.width * 0.28,
+    paddle.position.y + 8,
+    paddle.size.width * 0.22,
+    paddle.size.height - 16,
+  );
+
   context.restore();
 }
 
 function drawBall(context: CanvasRenderingContext2D, ball: Ball): void {
   context.save();
 
+  context.shadowColor = BALL_COLOR;
+  context.shadowBlur = 30;
   context.fillStyle = BALL_COLOR;
   context.beginPath();
   context.arc(ball.position.x, ball.position.y, ball.radius, 0, Math.PI * 2);
+  context.fill();
+
+  context.shadowBlur = 0;
+  context.fillStyle = BALL_CORE_COLOR;
+  context.beginPath();
+  context.arc(
+    ball.position.x,
+    ball.position.y,
+    ball.radius * 0.45,
+    0,
+    Math.PI * 2,
+  );
   context.fill();
 
   context.restore();
