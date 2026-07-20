@@ -5,6 +5,7 @@ import {
   PADDLE_SIZE,
   PLAYER_PADDLE_SPEED,
 } from "./constants";
+import { createServeVelocity, updateBallPhysics } from "./physics";
 import type { FrameStep, GameState, InputState, Size } from "./types";
 
 export function createInitialGameState(field: Size): GameState {
@@ -37,6 +38,7 @@ export function createInitialGameState(field: Size): GameState {
         x: field.width / 2,
         y: field.height / 2,
       },
+      velocity: createServeVelocity(1),
       radius: BALL_RADIUS,
     },
   };
@@ -52,6 +54,7 @@ export function updateGameState(
   state.timing.elapsedSeconds += step.deltaSeconds;
 
   updatePlayerPaddle(state, step.deltaSeconds, input);
+  updateBallPhysics(state, step.deltaSeconds);
 }
 
 function updatePlayerPaddle(

@@ -15,6 +15,7 @@ export interface Paddle {
 
 export interface Ball {
   position: Vector2;
+  velocity: Vector2;
   radius: number;
 }
 
