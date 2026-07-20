@@ -87,12 +87,12 @@ function drawBallTrail(
 
   for (const sample of ball.trail) {
     const life = 1 - sample.ageSeconds / BALL_TRAIL_MAX_AGE_SECONDS;
-    const alpha = Math.max(0, life) * 0.26;
-    const radius = ball.radius * (0.45 + life * 0.75);
+    const alpha = Math.max(0, life) * 0.22;
+    const radius = ball.radius * (0.38 + life * 0.65);
 
     context.globalAlpha = alpha;
     context.shadowColor = skin.ballGlowColor;
-    context.shadowBlur = 24 * life;
+    context.shadowBlur = 18 * life;
     context.fillStyle = skin.trailColor;
     context.beginPath();
     context.arc(sample.position.x, sample.position.y, radius, 0, Math.PI * 2);
@@ -149,7 +149,7 @@ function drawPaddle(
   context.save();
 
   context.shadowColor = glowColor;
-  context.shadowBlur = 28;
+  context.shadowBlur = 24;
   context.strokeStyle = color;
   context.lineWidth = 6;
   context.strokeRect(
@@ -159,7 +159,7 @@ function drawPaddle(
     paddle.size.height,
   );
 
-  context.shadowBlur = 14;
+  context.shadowBlur = 10;
   context.fillStyle = color;
   context.fillRect(
     paddle.position.x,
@@ -188,7 +188,7 @@ function drawBall(
   context.save();
 
   context.shadowColor = skin.ballGlowColor;
-  context.shadowBlur = 30;
+  context.shadowBlur = 28;
   context.fillStyle = skin.ballColor;
   context.beginPath();
   context.arc(ball.position.x, ball.position.y, ball.radius, 0, Math.PI * 2);
@@ -200,7 +200,7 @@ function drawBall(
   context.arc(
     ball.position.x,
     ball.position.y,
-    ball.radius * 0.45,
+    ball.radius * 0.42,
     0,
     Math.PI * 2,
   );

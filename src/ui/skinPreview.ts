@@ -58,9 +58,9 @@ function drawTrail(context: CanvasRenderingContext2D, skin: Skin): void {
 
   for (let index = 0; index < 5; index += 1) {
     const life = 1 - index / 5;
-    context.globalAlpha = life * 0.26;
+    context.globalAlpha = life * 0.22;
     context.shadowColor = skin.trailColor;
-    context.shadowBlur = life * 18;
+    context.shadowBlur = life * 14;
     context.fillStyle = skin.trailColor;
     context.beginPath();
     context.arc(176 - index * 20, 66, 10 + life * 8, 0, Math.PI * 2);

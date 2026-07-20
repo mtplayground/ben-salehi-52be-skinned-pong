@@ -25,6 +25,8 @@ body,
 }
 
 body {
+  background: #03040a;
+  overscroll-behavior: none;
   overflow: hidden;
 }
 
@@ -38,6 +40,7 @@ body {
   width: 100vw;
   height: 100vh;
   min-height: 100svh;
+  isolation: isolate;
   place-items: center;
   background:
     radial-gradient(circle at 18% 28%, rgba(39, 245, 255, 0.16), transparent 28rem),
@@ -82,6 +85,7 @@ body {
   width: 100%;
   height: 100%;
   background: #03040a;
+  touch-action: none;
 }
 
 .crt-overlay {
@@ -111,7 +115,7 @@ body {
 
 .score-hud {
   position: absolute;
-  top: clamp(16px, 3vh, 30px);
+  top: max(clamp(12px, 2.6vh, 28px), env(safe-area-inset-top));
   left: 50%;
   z-index: 2;
   display: grid;
@@ -136,7 +140,10 @@ body {
   display: grid;
   align-items: center;
   justify-items: center;
-  padding: clamp(18px, 5vw, 56px);
+  padding: max(clamp(18px, 5vw, 56px), env(safe-area-inset-top))
+    clamp(18px, 5vw, 56px)
+    max(clamp(18px, 5vw, 56px), env(safe-area-inset-bottom));
+  overflow-y: auto;
   background:
     radial-gradient(circle at 50% 36%, rgba(39, 245, 255, 0.18), transparent 26rem),
     radial-gradient(circle at 52% 64%, rgba(255, 61, 242, 0.12), transparent 24rem),
@@ -149,6 +156,7 @@ body {
   gap: clamp(24px, 5vh, 42px);
   justify-items: center;
   width: min(680px, 100%);
+  max-height: 100%;
   text-align: center;
 }
 
@@ -294,7 +302,10 @@ body {
   display: grid;
   align-items: center;
   justify-items: center;
-  padding: clamp(16px, 4vw, 48px);
+  padding: max(clamp(16px, 4vw, 48px), env(safe-area-inset-top))
+    clamp(16px, 4vw, 48px)
+    max(clamp(16px, 4vw, 48px), env(safe-area-inset-bottom));
+  overflow-y: auto;
   background:
     radial-gradient(circle at 50% 28%, rgba(39, 245, 255, 0.14), transparent 30rem),
     rgba(3, 4, 10, 0.82);
@@ -302,6 +313,7 @@ body {
 
 .skin-screen__panel {
   width: min(920px, 100%);
+  max-height: 100%;
 }
 
 .skin-screen__header {
@@ -342,7 +354,7 @@ body {
 
 .skin-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
   gap: 14px;
 }
 
@@ -375,6 +387,7 @@ body {
 .skin-card__preview {
   display: block;
   width: 100%;
+  aspect-ratio: 260 / 132;
   border-radius: 6px;
   background: #03040a;
 }
@@ -388,4 +401,32 @@ body {
   text-overflow: ellipsis;
   text-transform: uppercase;
   white-space: nowrap;
+}
+
+@media (max-width: 420px) {
+  .start-screen__actions,
+  .skin-screen__actions,
+  .match-end-screen__actions {
+    width: 100%;
+  }
+
+  .arcade-button {
+    flex: 1 1 100%;
+  }
+}
+
+@media (max-height: 520px) {
+  .start-screen__panel,
+  .match-end-screen__panel {
+    gap: 18px;
+  }
+
+  .start-screen h1,
+  .match-end-screen h1 {
+    font-size: clamp(2.3rem, 12vh, 4.2rem);
+  }
+
+  .match-end-screen__score {
+    font-size: clamp(2rem, 9vh, 3.3rem);
+  }
 }
