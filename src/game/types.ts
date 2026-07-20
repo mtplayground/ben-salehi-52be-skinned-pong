@@ -30,6 +30,18 @@ export interface InputState {
   down: boolean;
 }
 
+export interface Skin {
+  id: string;
+  label: string;
+  paddleColor: string;
+  paddleGlowColor: string;
+  ballColor: string;
+  ballCoreColor: string;
+  ballGlowColor: string;
+  trailColor: string;
+  accentColor: string;
+}
+
 export type PlayerSide = "player" | "opponent";
 export type GamePhase = "running" | "match-over";
 
