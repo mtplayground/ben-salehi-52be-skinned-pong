@@ -28,7 +28,13 @@ const renderer = createCanvasRenderer(canvas);
 const gameState = createInitialGameState(FIELD_SIZE);
 const keyboard = createKeyboardInput(window);
 const scoreHud = createScoreHud({ playerScore, opponentScore });
-createSkinSelectionScreen({ container: skinPickerList });
+createSkinSelectionScreen({
+  container: skinPickerList,
+  selectedSkinId: gameState.selectedSkinId,
+  onSelect: (skinId) => {
+    gameState.selectedSkinId = skinId;
+  },
+});
 const gameLoop = createGameLoop({
   update: (step) => {
     updateGameState(gameState, step, keyboard.state);

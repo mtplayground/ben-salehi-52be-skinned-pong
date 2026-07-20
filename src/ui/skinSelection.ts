@@ -4,11 +4,13 @@ import { renderSkinPreview } from "./skinPreview";
 export interface SkinSelectionOptions {
   container: HTMLElement;
   selectedSkinId?: string;
+  onSelect?: (skinId: string) => void;
 }
 
 export function createSkinSelectionScreen({
   container,
   selectedSkinId = DEFAULT_SKIN_ID,
+  onSelect,
 }: SkinSelectionOptions): void {
   let selectedId = selectedSkinId;
   const cards: HTMLButtonElement[] = [];
@@ -31,6 +33,7 @@ export function createSkinSelectionScreen({
     card.addEventListener("click", () => {
       selectedId = skin.id;
       updateSelection(cards, selectedId);
+      onSelect?.(skin.id);
     });
 
     renderSkinPreview(preview, skin);

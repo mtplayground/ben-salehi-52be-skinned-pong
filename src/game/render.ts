@@ -1,14 +1,12 @@
-import type { Ball, GameState, Paddle, Size } from "./types";
 import { BALL_TRAIL_MAX_AGE_SECONDS, FIELD_BORDER_INSET } from "./constants";
+import { getSkinById } from "./skins";
+import type { Ball, GameState, Paddle, Size, Skin } from "./types";
 
 const BACKGROUND_COLOR = "#03040a";
 const FIELD_LINE_COLOR = "#27f5ff";
 const FIELD_ACCENT_COLOR = "#ff3df2";
 const CENTER_LINE_COLOR = "rgba(57, 255, 20, 0.5)";
-const PLAYER_PADDLE_COLOR = "#27f5ff";
 const OPPONENT_PADDLE_COLOR = "#ff3df2";
-const BALL_COLOR = "#39ff14";
-const BALL_CORE_COLOR = "#f7fff6";
 
 export interface CanvasRenderer {
   resize(): void;
@@ -53,11 +51,18 @@ export function createCanvasRenderer(canvas: HTMLCanvasElement): CanvasRenderer 
     context2d.translate(offsetX, offsetY);
     context2d.scale(scale, scale);
 
+    const selectedSkin = getSkinById(state.selectedSkinId);
+
     drawPlayField(context2d, state.field);
-    drawBallTrail(context2d, state.ball);
-    drawPaddle(context2d, state.player, PLAYER_PADDLE_COLOR);
+    drawBallTrail(context2d, state.ball, selectedSkin);
+    drawPaddle(
+      context2d,
+      state.player,
+      selectedSkin.paddleColor,
+      selectedSkin.paddleGlowColor,
+    );
     drawPaddle(context2d, state.opponent, OPPONENT_PADDLE_COLOR);
-    drawBall(context2d, state.ball);
+    drawBall(context2d, state.ball, selectedSkin);
 
     context2d.restore();
   }
@@ -68,7 +73,11 @@ export function createCanvasRenderer(canvas: HTMLCanvasElement): CanvasRenderer 
   };
 }
 
-function drawBallTrail(context: CanvasRenderingContext2D, ball: Ball): void {
+function drawBallTrail(
+  context: CanvasRenderingContext2D,
+  ball: Ball,
+  skin: Skin,
+): void {
   if (ball.trail.length === 0) {
     return;
   }
@@ -82,9 +91,9 @@ function drawBallTrail(context: CanvasRenderingContext2D, ball: Ball): void {
     const radius = ball.radius * (0.45 + life * 0.75);
 
     context.globalAlpha = alpha;
-    context.shadowColor = BALL_COLOR;
+    context.shadowColor = skin.ballGlowColor;
     context.shadowBlur = 24 * life;
-    context.fillStyle = BALL_COLOR;
+    context.fillStyle = skin.trailColor;
     context.beginPath();
     context.arc(sample.position.x, sample.position.y, radius, 0, Math.PI * 2);
     context.fill();
@@ -135,10 +144,11 @@ function drawPaddle(
   context: CanvasRenderingContext2D,
   paddle: Paddle,
   color: string,
+  glowColor = color,
 ): void {
   context.save();
 
-  context.shadowColor = color;
+  context.shadowColor = glowColor;
   context.shadowBlur = 28;
   context.strokeStyle = color;
   context.lineWidth = 6;
@@ -170,18 +180,22 @@ function drawPaddle(
   context.restore();
 }
 
-function drawBall(context: CanvasRenderingContext2D, ball: Ball): void {
+function drawBall(
+  context: CanvasRenderingContext2D,
+  ball: Ball,
+  skin: Skin,
+): void {
   context.save();
 
-  context.shadowColor = BALL_COLOR;
+  context.shadowColor = skin.ballGlowColor;
   context.shadowBlur = 30;
-  context.fillStyle = BALL_COLOR;
+  context.fillStyle = skin.ballColor;
   context.beginPath();
   context.arc(ball.position.x, ball.position.y, ball.radius, 0, Math.PI * 2);
   context.fill();
 
   context.shadowBlur = 0;
-  context.fillStyle = BALL_CORE_COLOR;
+  context.fillStyle = skin.ballCoreColor;
   context.beginPath();
   context.arc(
     ball.position.x,

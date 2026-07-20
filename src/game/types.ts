@@ -62,6 +62,7 @@ export interface GameState {
   timing: GameTiming;
   score: Score;
   winner: PlayerSide | null;
+  selectedSkinId: string;
   player: Paddle;
   opponent: Paddle;
   ball: Ball;
