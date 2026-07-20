@@ -1,0 +1,87 @@
+Architecture plan for skinned Pong
+
+Project shape
+- Start with a small Vite + TypeScript web app in Issue #1, using a single
+  full-screen canvas as the game surface and DOM overlays for menus, score,
+  skin selection, and match-end controls.
+- Keep the runtime entirely client-side. No server is needed for game state,
+  persistence, or assets beyond static hosting.
+
+Module structure
+- src/main.ts: app bootstrap, canvas creation, root controller wiring.
+- src/styles.css: global layout, dark neon theme, responsive sizing, CRT and
+  glow effects that are cleaner in CSS than canvas.
+- src/game/types.ts: shared types for vectors, rectangles, game state, screens,
+  skins, inputs, score, and match configuration.
+- src/game/constants.ts: base field dimensions, paddle and ball sizes, winning
+  score, AI tuning knobs, palette defaults, and timing constants.
+- src/game/state.ts: initial state factories, reset helpers, match lifecycle,
+  scoring transitions, selected skin hydration from localStorage.
+- src/game/loop.ts: requestAnimationFrame loop, delta clamping, update/render
+  orchestration, pause behavior while on non-match screens.
+- src/game/input.ts: keyboard listeners and normalized input state for the
+  player paddle.
+- src/game/physics.ts: ball movement, wall/paddle collision, bounce angles,
+  score detection, and serve direction logic.
+- src/game/ai.ts: opponent paddle target selection, reaction delay, max speed,
+  and fairness tuning.
+- src/game/render.ts: canvas rendering for field, paddles, ball, midline,
+  trail, glow, and scale-to-fit transforms.
+- src/game/skins.ts: canonical skin definitions and helpers to apply colors and
+  effects to paddles, ball, and preview renders.
+- src/ui/screens.ts: DOM screen navigation for title, skin selection, in-game
+  overlay, and match-end screen.
+- src/ui/score.ts: live score display binding.
+- src/ui/skinPreview.ts: compact canvas or DOM preview for paddle and ball
+  skins.
+- src/storage.ts: localStorage keys and guarded load/save helpers.
+
+Shared types
+- Screen: "title" | "skin-select" | "match" | "match-end".
+- Vec2: x/y numbers for position and velocity.
+- Paddle: position, size, speed, score, skinId.
+- Ball: position, radius, velocity, trail samples, skinId.
+- Skin: id, label, paddleColor, ballColor, glowColor, trailColor, accentColor.
+- GameState: screen, field, player, opponent, ball, score, winner, selectedSkin.
+- InputState: up/down booleans.
+- MatchConfig: winningScore, playerSpeed, aiSpeed, aiReaction, ballSpeed.
+
+Issue dependencies
+- #1 must establish the web app, canvas, and basic source layout.
+- #2 depends on #1 and creates the loop/render/update boundaries used by all
+  gameplay issues.
+- #3 depends on #2 and provides visible primitives for later movement work.
+- #4, #5, and #6 depend on #2/#3 and can be implemented sequentially around
+  input, physics, and AI.
+- #7 depends on ball movement and collision outcomes from #5.
+- #8 depends on #7 score state.
+- #9, #10, and #11 depend on the renderer from #3 and can layer visual polish
+  without changing gameplay rules.
+- #12 defines data needed by #13, #14, and #15.
+- #13 depends on #12 and the screen/navigation structure.
+- #14 depends on #12 and rendering hooks from #3/#9/#11.
+- #15 depends on #12/#14 and storage helpers.
+- #16 and #17 establish title and match-end screens around the existing match
+  lifecycle.
+- #18 depends on #13/#16/#17 and formalizes transitions between all screens.
+- #19 depends on the complete gameplay and navigation path.
+- #20 depends on #19 observations and adjusts AI constants/behavior.
+- #21 depends on the full feature set and finalizes responsive and visual
+  details.
+
+Key design decisions
+- Use a fixed logical play field with responsive canvas scaling. Gameplay math
+  stays stable while the canvas adapts to viewport size.
+- Keep game simulation state separate from rendering and DOM UI so later issues
+  can modify one area without coupling regressions into the others.
+- Use delta-time updates with a maximum delta clamp to avoid giant jumps after
+  tab switches or pauses.
+- Store skin choice locally only; no account or backend state is required.
+- Treat screen navigation as explicit state transitions instead of ad hoc show
+  and hide calls.
+- Define skins as data, not conditionals, so previews and in-match rendering
+  use the same source of truth.
+- Tune AI through constants first, preserving a predictable opponent that can be
+  tested and adjusted without rewriting the loop.
+- Prefer canvas for game objects and CSS for full-screen overlays such as CRT
+  scanlines and menu layout.
