@@ -1,5 +1,5 @@
 import "./styles.css";
-import { FIELD_SIZE } from "./game/constants";
+import { FIELD_SIZE, WINNING_SCORE } from "./game/constants";
 import { createKeyboardInput } from "./game/input";
 import { createGameLoop } from "./game/loop";
 import { createCanvasRenderer } from "./game/render";
@@ -9,11 +9,26 @@ import {
   resetMatchState,
   updateGameState,
 } from "./game/state";
-import type { GamePhase } from "./game/types";
+import type { GamePhase, PlayerSide } from "./game/types";
 import { createMatchEndScreen } from "./ui/matchEnd";
 import { createScreenNavigation } from "./ui/navigation";
 import { createScoreHud } from "./ui/score";
 import { createSkinSelectionScreen } from "./ui/skinSelection";
+
+declare global {
+  interface Window {
+    __skinnedPongE2E__?: {
+      forceWin(winner: PlayerSide): void;
+      snapshot(): {
+        phase: GamePhase;
+        playerScore: number;
+        opponentScore: number;
+        selectedSkinId: string;
+        winner: PlayerSide | null;
+      };
+    };
+  }
+}
 
 const canvas = document.querySelector<HTMLCanvasElement>("#game-canvas");
 const startScreen = document.querySelector<HTMLElement>("#start-screen");
@@ -99,6 +114,17 @@ function startMatch(): void {
   navigation.showMatch();
 }
 
+function showForcedWin(winner: PlayerSide): void {
+  resetMatchState(gameState);
+  gameState.score.player = winner === "player" ? WINNING_SCORE : 0;
+  gameState.score.opponent = winner === "opponent" ? WINNING_SCORE : 0;
+  gameState.phase = "match-over";
+  gameState.winner = winner;
+  scoreHud.update(gameState);
+  matchEndScreen.update(gameState);
+  navigation.showMatchEnd();
+}
+
 startMatchButton.addEventListener("click", startMatch);
 skinStartMatchButton.addEventListener("click", startMatch);
 replayMatchButton.addEventListener("click", startMatch);
@@ -111,6 +137,19 @@ endChangeSkinButton.addEventListener("click", () => {
 skinBackButton.addEventListener("click", () => {
   navigation.returnFromSkins();
 });
+
+if (import.meta.env.DEV) {
+  window.__skinnedPongE2E__ = {
+    forceWin: showForcedWin,
+    snapshot: () => ({
+      phase: gameState.phase,
+      playerScore: gameState.score.player,
+      opponentScore: gameState.score.opponent,
+      selectedSkinId: gameState.selectedSkinId,
+      winner: gameState.winner,
+    }),
+  };
+}
 
 const gameLoop = createGameLoop({
   update: (step) => {
