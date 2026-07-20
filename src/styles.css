@@ -45,6 +45,7 @@ body {
 .app-shell::before {
   position: absolute;
   inset: 0;
+  z-index: 0;
   pointer-events: none;
   content: "";
   background-image:
@@ -56,6 +57,7 @@ body {
 
 .canvas-frame {
   position: relative;
+  z-index: 0;
   width: 100vw;
   height: 100vh;
   min-height: 100svh;
@@ -76,6 +78,31 @@ body {
   width: 100%;
   height: 100%;
   background: #03040a;
+}
+
+.crt-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      rgba(247, 255, 246, 0.035) 50%,
+      rgba(1, 1, 6, 0.09) 50%
+    ),
+    linear-gradient(
+      90deg,
+      rgba(255, 61, 242, 0.03),
+      rgba(39, 245, 255, 0.025),
+      rgba(57, 255, 20, 0.02)
+    );
+  background-size:
+    100% 4px,
+    6px 100%;
+  box-shadow:
+    inset 0 0 72px rgba(0, 0, 0, 0.26),
+    inset 0 0 180px rgba(0, 0, 0, 0.2);
+  opacity: 0.42;
 }
 
 .score-hud {
