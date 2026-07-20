@@ -5,6 +5,7 @@ import {
   PADDLE_SIZE,
   PLAYER_PADDLE_SPEED,
 } from "./constants";
+import { updateOpponentPaddle } from "./ai";
 import { createServeVelocity, updateBallPhysics } from "./physics";
 import type { FrameStep, GameState, InputState, Size } from "./types";
 
@@ -54,6 +55,7 @@ export function updateGameState(
   state.timing.elapsedSeconds += step.deltaSeconds;
 
   updatePlayerPaddle(state, step.deltaSeconds, input);
+  updateOpponentPaddle(state, step.deltaSeconds);
   updateBallPhysics(state, step.deltaSeconds);
 }
 
