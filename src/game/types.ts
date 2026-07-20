@@ -24,7 +24,13 @@ export interface InputState {
   down: boolean;
 }
 
-export type GamePhase = "running";
+export type PlayerSide = "player" | "opponent";
+export type GamePhase = "running" | "match-over";
+
+export interface Score {
+  player: number;
+  opponent: number;
+}
 
 export interface GameTiming {
   frame: number;
@@ -36,6 +42,8 @@ export interface GameState {
   field: Size;
   phase: GamePhase;
   timing: GameTiming;
+  score: Score;
+  winner: PlayerSide | null;
   player: Paddle;
   opponent: Paddle;
   ball: Ball;
