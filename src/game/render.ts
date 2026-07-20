@@ -1,4 +1,5 @@
 import type { Ball, GameState, Paddle, Size } from "./types";
+import { FIELD_BORDER_INSET } from "./constants";
 
 const BACKGROUND_COLOR = "#05050b";
 const FIELD_LINE_COLOR = "rgba(85, 240, 255, 0.42)";
@@ -71,7 +72,12 @@ function drawPlayField(context: CanvasRenderingContext2D, fieldSize: Size): void
   context.lineWidth = 4;
   context.shadowColor = "rgba(0, 240, 255, 0.52)";
   context.shadowBlur = 18;
-  context.strokeRect(28, 28, fieldSize.width - 56, fieldSize.height - 56);
+  context.strokeRect(
+    FIELD_BORDER_INSET,
+    FIELD_BORDER_INSET,
+    fieldSize.width - FIELD_BORDER_INSET * 2,
+    fieldSize.height - FIELD_BORDER_INSET * 2,
+  );
 
   context.setLineDash([16, 18]);
   context.strokeStyle = CENTER_LINE_COLOR;

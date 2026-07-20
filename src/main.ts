@@ -1,5 +1,6 @@
 import "./styles.css";
 import { FIELD_SIZE } from "./game/constants";
+import { createKeyboardInput } from "./game/input";
 import { createGameLoop } from "./game/loop";
 import { createCanvasRenderer } from "./game/render";
 import { createInitialGameState, updateGameState } from "./game/state";
@@ -12,9 +13,10 @@ if (!canvas) {
 
 const renderer = createCanvasRenderer(canvas);
 const gameState = createInitialGameState(FIELD_SIZE);
+const keyboard = createKeyboardInput(window);
 const gameLoop = createGameLoop({
   update: (step) => {
-    updateGameState(gameState, step);
+    updateGameState(gameState, step, keyboard.state);
   },
   draw: () => {
     renderer.resize();

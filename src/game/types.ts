@@ -18,6 +18,11 @@ export interface Ball {
   radius: number;
 }
 
+export interface InputState {
+  up: boolean;
+  down: boolean;
+}
+
 export type GamePhase = "running";
 
 export interface GameTiming {
