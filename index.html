@@ -61,6 +61,28 @@
           <div id="skin-picker-list" class="skin-grid"></div>
         </div>
       </section>
+      <section
+        id="match-end-screen"
+        class="match-end-screen"
+        aria-label="Match result"
+        aria-live="assertive"
+        hidden
+      >
+        <div class="match-end-screen__panel">
+          <div class="match-end-screen__summary">
+            <h1 id="match-result-title">Match Over</h1>
+            <p id="match-final-score" class="match-end-screen__score">0 : 0</p>
+          </div>
+          <div class="match-end-screen__actions">
+            <button id="replay-match-button" class="arcade-button" type="button">
+              Replay
+            </button>
+            <button id="end-change-skin-button" class="arcade-button arcade-button--secondary" type="button">
+              Change Skin
+            </button>
+          </div>
+        </div>
+      </section>
     </main>
     <script type="module" src="/src/main.ts"></script>
   </body>

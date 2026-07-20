@@ -86,6 +86,27 @@ export function updateGameState(
   }
 }
 
+export function resetMatchState(state: GameState): void {
+  const paddleY = (state.field.height - PADDLE_SIZE.height) / 2;
+
+  state.phase = "running";
+  state.timing.frame = 0;
+  state.timing.elapsedSeconds = 0;
+  state.timing.deltaSeconds = 0;
+  state.score.player = 0;
+  state.score.opponent = 0;
+  state.winner = null;
+  state.player.position.x = PADDLE_EDGE_OFFSET;
+  state.player.position.y = paddleY;
+  state.opponent.position.x =
+    state.field.width - PADDLE_EDGE_OFFSET - PADDLE_SIZE.width;
+  state.opponent.position.y = paddleY;
+  state.ball.position.x = state.field.width / 2;
+  state.ball.position.y = state.field.height / 2;
+  state.ball.velocity = createServeVelocity(1);
+  state.ball.trail = [];
+}
+
 function awardPoint(state: GameState, winner: PlayerSide): void {
   state.score[winner] += 1;
 
