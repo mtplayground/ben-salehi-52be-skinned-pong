@@ -103,13 +103,13 @@ startMatchButton.addEventListener("click", startMatch);
 skinStartMatchButton.addEventListener("click", startMatch);
 replayMatchButton.addEventListener("click", startMatch);
 openSkinsButton.addEventListener("click", () => {
-  navigation.showSkins();
+  navigation.showSkins("start");
 });
 endChangeSkinButton.addEventListener("click", () => {
-  navigation.showSkins();
+  navigation.showSkins("match-end");
 });
 skinBackButton.addEventListener("click", () => {
-  navigation.showStart();
+  navigation.returnFromSkins();
 });
 
 const gameLoop = createGameLoop({
