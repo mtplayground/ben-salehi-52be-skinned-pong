@@ -4,7 +4,14 @@ import {
   BALL_SPEED,
   FIELD_BORDER_INSET,
 } from "./constants";
-import type { Ball, GameState, Paddle, Size, Vector2 } from "./types";
+import type {
+  Ball,
+  GameState,
+  Paddle,
+  PlayerSide,
+  Size,
+  Vector2,
+} from "./types";
 
 export function createServeVelocity(
   horizontalDirection: -1 | 1,
@@ -16,14 +23,17 @@ export function createServeVelocity(
   };
 }
 
-export function updateBallPhysics(state: GameState, deltaSeconds: number): void {
+export function updateBallPhysics(
+  state: GameState,
+  deltaSeconds: number,
+): PlayerSide | null {
   state.ball.position.x += state.ball.velocity.x * deltaSeconds;
   state.ball.position.y += state.ball.velocity.y * deltaSeconds;
 
   bounceOffHorizontalWalls(state.ball, state.field);
   bounceOffPaddle(state.ball, state.player, 1);
   bounceOffPaddle(state.ball, state.opponent, -1);
-  resetAfterPoint(state.ball, state.field);
+  return resetAfterPoint(state.ball, state.field);
 }
 
 function bounceOffHorizontalWalls(ball: Ball, field: Size): void {
@@ -81,14 +91,18 @@ function intersectsPaddle(ball: Ball, paddle: Paddle): boolean {
   );
 }
 
-function resetAfterPoint(ball: Ball, field: Size): void {
+function resetAfterPoint(ball: Ball, field: Size): PlayerSide | null {
   if (ball.position.x + ball.radius < FIELD_BORDER_INSET) {
     resetBall(ball, field, 1);
+    return "opponent";
   }
 
   if (ball.position.x - ball.radius > field.width - FIELD_BORDER_INSET) {
     resetBall(ball, field, -1);
+    return "player";
   }
+
+  return null;
 }
 
 function resetBall(ball: Ball, field: Size, horizontalDirection: -1 | 1): void {

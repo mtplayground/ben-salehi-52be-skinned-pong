@@ -4,10 +4,17 @@ import {
   PADDLE_EDGE_OFFSET,
   PADDLE_SIZE,
   PLAYER_PADDLE_SPEED,
+  WINNING_SCORE,
 } from "./constants";
 import { updateOpponentPaddle } from "./ai";
 import { createServeVelocity, updateBallPhysics } from "./physics";
-import type { FrameStep, GameState, InputState, Size } from "./types";
+import type {
+  FrameStep,
+  GameState,
+  InputState,
+  PlayerSide,
+  Size,
+} from "./types";
 
 export function createInitialGameState(field: Size): GameState {
   const paddleY = (field.height - PADDLE_SIZE.height) / 2;
@@ -20,6 +27,11 @@ export function createInitialGameState(field: Size): GameState {
       elapsedSeconds: 0,
       deltaSeconds: 0,
     },
+    score: {
+      player: 0,
+      opponent: 0,
+    },
+    winner: null,
     player: {
       position: {
         x: PADDLE_EDGE_OFFSET,
@@ -54,9 +66,26 @@ export function updateGameState(
   state.timing.deltaSeconds = step.deltaSeconds;
   state.timing.elapsedSeconds += step.deltaSeconds;
 
+  if (state.phase === "match-over") {
+    return;
+  }
+
   updatePlayerPaddle(state, step.deltaSeconds, input);
   updateOpponentPaddle(state, step.deltaSeconds);
-  updateBallPhysics(state, step.deltaSeconds);
+  const pointWinner = updateBallPhysics(state, step.deltaSeconds);
+
+  if (pointWinner) {
+    awardPoint(state, pointWinner);
+  }
+}
+
+function awardPoint(state: GameState, winner: PlayerSide): void {
+  state.score[winner] += 1;
+
+  if (state.score[winner] >= WINNING_SCORE) {
+    state.phase = "match-over";
+    state.winner = winner;
+  }
 }
 
 function updatePlayerPaddle(
