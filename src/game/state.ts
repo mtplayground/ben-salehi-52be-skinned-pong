@@ -9,6 +9,7 @@ import {
 import { updateOpponentPaddle } from "./ai";
 import { createServeVelocity, updateBallPhysics } from "./physics";
 import { DEFAULT_SKIN_ID } from "./skins";
+import type { SkinId } from "./skins";
 import type {
   FrameStep,
   GameState,
@@ -17,7 +18,10 @@ import type {
   Size,
 } from "./types";
 
-export function createInitialGameState(field: Size): GameState {
+export function createInitialGameState(
+  field: Size,
+  selectedSkinId: SkinId = DEFAULT_SKIN_ID,
+): GameState {
   const paddleY = (field.height - PADDLE_SIZE.height) / 2;
 
   return {
@@ -33,7 +37,7 @@ export function createInitialGameState(field: Size): GameState {
       opponent: 0,
     },
     winner: null,
-    selectedSkinId: DEFAULT_SKIN_ID,
+    selectedSkinId,
     player: {
       position: {
         x: PADDLE_EDGE_OFFSET,

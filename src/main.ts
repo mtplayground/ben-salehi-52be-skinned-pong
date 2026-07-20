@@ -3,6 +3,7 @@ import { FIELD_SIZE } from "./game/constants";
 import { createKeyboardInput } from "./game/input";
 import { createGameLoop } from "./game/loop";
 import { createCanvasRenderer } from "./game/render";
+import { loadSelectedSkinId, saveSelectedSkinId } from "./game/skinStorage";
 import { createInitialGameState, updateGameState } from "./game/state";
 import { createScoreHud } from "./ui/score";
 import { createSkinSelectionScreen } from "./ui/skinSelection";
@@ -25,7 +26,7 @@ if (!skinPickerList) {
 }
 
 const renderer = createCanvasRenderer(canvas);
-const gameState = createInitialGameState(FIELD_SIZE);
+const gameState = createInitialGameState(FIELD_SIZE, loadSelectedSkinId());
 const keyboard = createKeyboardInput(window);
 const scoreHud = createScoreHud({ playerScore, opponentScore });
 createSkinSelectionScreen({
@@ -33,6 +34,7 @@ createSkinSelectionScreen({
   selectedSkinId: gameState.selectedSkinId,
   onSelect: (skinId) => {
     gameState.selectedSkinId = skinId;
+    saveSelectedSkinId(skinId);
   },
 });
 const gameLoop = createGameLoop({
