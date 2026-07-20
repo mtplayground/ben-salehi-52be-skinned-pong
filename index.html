@@ -11,6 +11,17 @@
       <section class="canvas-frame" aria-label="Play area">
         <canvas id="game-canvas" aria-label="Skinned Pong play field"></canvas>
       </section>
+      <aside class="score-hud" aria-label="Current score" aria-live="polite">
+        <span class="score-side score-side--player">
+          <span class="score-label">Player</span>
+          <span id="player-score" class="score-value">0</span>
+        </span>
+        <span class="score-divider" aria-hidden="true">:</span>
+        <span class="score-side score-side--opponent">
+          <span id="opponent-score" class="score-value">0</span>
+          <span class="score-label">AI</span>
+        </span>
+      </aside>
     </main>
     <script type="module" src="/src/main.ts"></script>
   </body>
