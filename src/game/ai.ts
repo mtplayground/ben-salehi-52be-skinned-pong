@@ -1,8 +1,10 @@
 import {
+  AI_MAX_AIM_ERROR,
   AI_PADDLE_SPEED,
   AI_REACTION_LAG_SECONDS,
   AI_RECENTER_SPEED_RATIO,
   AI_TRACKING_DEAD_ZONE,
+  BALL_SPEED,
   FIELD_BORDER_INSET,
 } from "./constants";
 import type { GameState } from "./types";
@@ -42,7 +44,17 @@ function getTargetCenterY(state: GameState): number {
     return state.field.height / 2;
   }
 
-  return state.ball.position.y - state.ball.velocity.y * AI_REACTION_LAG_SECONDS;
+  const delayedBallY =
+    state.ball.position.y - state.ball.velocity.y * AI_REACTION_LAG_SECONDS;
+  const verticalPressure = clamp(
+    Math.abs(state.ball.velocity.y) / (BALL_SPEED * 0.9),
+    0,
+    1,
+  );
+  const missDirection =
+    state.ball.velocity.y === 0 ? 0 : Math.sign(state.ball.velocity.y);
+
+  return delayedBallY + missDirection * AI_MAX_AIM_ERROR * verticalPressure;
 }
 
 function clamp(value: number, min: number, max: number): number {
