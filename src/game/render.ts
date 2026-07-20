@@ -1,5 +1,5 @@
 import type { Ball, GameState, Paddle, Size } from "./types";
-import { FIELD_BORDER_INSET } from "./constants";
+import { BALL_TRAIL_MAX_AGE_SECONDS, FIELD_BORDER_INSET } from "./constants";
 
 const BACKGROUND_COLOR = "#03040a";
 const FIELD_LINE_COLOR = "#27f5ff";
@@ -54,6 +54,7 @@ export function createCanvasRenderer(canvas: HTMLCanvasElement): CanvasRenderer 
     context2d.scale(scale, scale);
 
     drawPlayField(context2d, state.field);
+    drawBallTrail(context2d, state.ball);
     drawPaddle(context2d, state.player, PLAYER_PADDLE_COLOR);
     drawPaddle(context2d, state.opponent, OPPONENT_PADDLE_COLOR);
     drawBall(context2d, state.ball);
@@ -65,6 +66,31 @@ export function createCanvasRenderer(canvas: HTMLCanvasElement): CanvasRenderer 
     resize,
     draw,
   };
+}
+
+function drawBallTrail(context: CanvasRenderingContext2D, ball: Ball): void {
+  if (ball.trail.length === 0) {
+    return;
+  }
+
+  context.save();
+  context.globalCompositeOperation = "lighter";
+
+  for (const sample of ball.trail) {
+    const life = 1 - sample.ageSeconds / BALL_TRAIL_MAX_AGE_SECONDS;
+    const alpha = Math.max(0, life) * 0.26;
+    const radius = ball.radius * (0.45 + life * 0.75);
+
+    context.globalAlpha = alpha;
+    context.shadowColor = BALL_COLOR;
+    context.shadowBlur = 24 * life;
+    context.fillStyle = BALL_COLOR;
+    context.beginPath();
+    context.arc(sample.position.x, sample.position.y, radius, 0, Math.PI * 2);
+    context.fill();
+  }
+
+  context.restore();
 }
 
 function drawPlayField(context: CanvasRenderingContext2D, fieldSize: Size): void {

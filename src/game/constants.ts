@@ -23,3 +23,4 @@ export const BALL_RADIUS = 13;
 export const BALL_SPEED = 520;
 export const BALL_INITIAL_VERTICAL_SPEED_RATIO = 0.2;
 export const BALL_MAX_BOUNCE_ANGLE = Math.PI / 3;
+export const BALL_TRAIL_MAX_AGE_SECONDS = 0.32;

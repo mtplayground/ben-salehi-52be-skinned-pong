@@ -17,6 +17,12 @@ export interface Ball {
   position: Vector2;
   velocity: Vector2;
   radius: number;
+  trail: BallTrailSample[];
+}
+
+export interface BallTrailSample {
+  position: Vector2;
+  ageSeconds: number;
 }
 
 export interface InputState {
