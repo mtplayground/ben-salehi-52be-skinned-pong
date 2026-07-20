@@ -53,6 +53,7 @@ export function createInitialGameState(field: Size): GameState {
       },
       velocity: createServeVelocity(1),
       radius: BALL_RADIUS,
+      trail: [],
     },
   };
 }

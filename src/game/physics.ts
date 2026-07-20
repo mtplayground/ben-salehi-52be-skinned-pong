@@ -2,6 +2,7 @@ import {
   BALL_INITIAL_VERTICAL_SPEED_RATIO,
   BALL_MAX_BOUNCE_ANGLE,
   BALL_SPEED,
+  BALL_TRAIL_MAX_AGE_SECONDS,
   FIELD_BORDER_INSET,
 } from "./constants";
 import type {
@@ -27,13 +28,29 @@ export function updateBallPhysics(
   state: GameState,
   deltaSeconds: number,
 ): PlayerSide | null {
+  updateBallTrail(state.ball, deltaSeconds);
+
   state.ball.position.x += state.ball.velocity.x * deltaSeconds;
   state.ball.position.y += state.ball.velocity.y * deltaSeconds;
+  state.ball.trail.push({
+    position: { ...state.ball.position },
+    ageSeconds: 0,
+  });
 
   bounceOffHorizontalWalls(state.ball, state.field);
   bounceOffPaddle(state.ball, state.player, 1);
   bounceOffPaddle(state.ball, state.opponent, -1);
   return resetAfterPoint(state.ball, state.field);
+}
+
+function updateBallTrail(ball: Ball, deltaSeconds: number): void {
+  for (const sample of ball.trail) {
+    sample.ageSeconds += deltaSeconds;
+  }
+
+  ball.trail = ball.trail.filter(
+    (sample) => sample.ageSeconds <= BALL_TRAIL_MAX_AGE_SECONDS,
+  );
 }
 
 function bounceOffHorizontalWalls(ball: Ball, field: Size): void {
@@ -111,6 +128,7 @@ function resetBall(ball: Ball, field: Size, horizontalDirection: -1 | 1): void {
   ball.position.x = field.width / 2;
   ball.position.y = field.height / 2;
   ball.velocity = createServeVelocity(horizontalDirection, verticalDirection);
+  ball.trail = [];
 }
 
 function clamp(value: number, min: number, max: number): number {
